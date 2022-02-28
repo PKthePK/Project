@@ -1,0 +1,91 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.btn {
+    width: 40px;
+    height: 40px;
+    font-size: 100%;
+    text-align: center;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    overflow: hidden;
+}
+
+.numpad{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* border: 1px solid black; */
+}
+
+.btnInputs{
+    align-items: center;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* border: 1px solid blue; */
+}
+
+.flex-column{
+    margin-left: 2px;
+    margin-right: 2px;
+    display:flex;
+    flex-direction: column;
+    /* border: 1px solid red; */
+}
+
+.flex-row{
+    display:flex;
+    flex-direction: row;
+    /* border: 1px solid green; */
+}
+
+.outputBox{
+    border: 1px solid black;
+    width: 100%;
+    /* min-height: 80px; */
+    height: auto;
+    word-wrap: break-word;
+    padding-right: 5px;
+    padding-left: 5px;
+    background-color: rgb(21, 219, 233);
+    font-family : calibri;
+}
+
+.previousOperand{
+    text-align: start;
+    min-height: 35px;
+    padding-top: 5px;
+    /* border: 1px solid blue; */
+}
+
+.currentOperand{
+    box-sizing: border-box;
+    text-align: start;
+    height: 40px;
+    font-size: 30px;
+    padding-top: 5px;
+    /* border: 1px solid green; */
+}
+
+.historyOperand{
+    text-align: start;
+    min-height: 20px;
+    /* border: 1px solid red; */
+}
+
+.resultOperand{
+    text-align: start;
+
+    /* border: 1px solid yellow; */
+}
+
+.window {
+    /* width: fit-content; */
+    width: 356px;
+    border: 2px solid orange;
+}
