@@ -8,18 +8,23 @@ class Calculator{
     }
 
     appendValue(number){
-        console.log('appendValue()')
+        if(number == '.' && this.currentValue.toString().includes('.')){
+            return;
+        }
+        // if(this.currentValue.toString().indexOf('.') == 0){
+        //     this.currentValue = "testing";
+        // }
         this.currentValue = this.currentValue.toString() + number.toString();
         // this.currentValueOutput.innerText = this.currentValue
     }
 
     allClear(){
-        console.log('allClear()')
         this.historyValue = '';
         this.previousValue = '';
         this.currentValue = '';
         this.resultValue = '';
-        this.operator = undefined;
+        this.currentOperator = undefined;
+        this.previousOperator = undefined;
         this.ext = undefined;
         // this.historyValueOutput.innerText = this.historyValue;
         // this.previousValueOutput.innerText = this.previousValue;
@@ -28,117 +33,138 @@ class Calculator{
     }
 
     operators(operater){
-        if(this.currentValue == ''){
+        if(this.previousOperator != this.currentOperator){
+            this.currentOperator = operater;
+        }
+        if(this.currentValue == ''|| this.currentValue =='.'){
             return;
         }
         if(this.previousValue != ''){
             this.calculate();
         }
-        console.log('operators()')
-        this.operator = operater;
+        this.currentOperator = operater;
         this.previousValue = this.currentValue;
         this.currentValue = '';
     }
 
     updateDisplay(){
-        console.log('updateDiplay()')
         this.historyValueOutput.innerText = this.historyValue;
         this.previousValueOutput.innerText = this.previousValue;
         this.currentValueOutput.innerText = this.currentValue;
         this.resultValueOutput.innerText = this.resultValue;
-        // console.log('Operator: ',this.operator)
-        if(this.operator != null){
-            console.log('updateDisplay()2')
-            this.previousValueOutput.innerText = `${this.previousValue} ${this.operator} ${this.currentValue}`
+        if(this.currentOperator != null){
+            this.previousValueOutput.innerText = `${this.previousValue} ${this.currentOperator} ${this.currentValue}`;
         }
     }
 
     clearEntry(){
-        console.log('clearEntry()')
         this.currentValue = '';
-        this.historyValue = ''
+        this.historyValue = '';
     }
 
     delete(){
-        console.log('delete()')
-        this.currentValue = this.currentValue.toString().slice(0,-1)
+        if(!isNaN(this.currentValue)){
+            if(this.currentValue == Infinity){
+                this.currentValue = '';
+            } else{
+                this.currentValue = this.currentValue.toString().slice(0,-1);
+            }
+        }
+        if(this.currentValue == NaN || this.currentValue == undefined){
+            this.currentValue = '';
+        }
     }
 
     calculate(){
-        if(this.previousValue == '' || this.currentValue == ''){
-            return;
-        }
-        console.log('calculate()');
         let result;
         let firstValue = parseFloat(this.previousValue);
         let secondValue = parseFloat(this.currentValue);
-
-        switch(this.operator){
+        if(isNaN(firstValue) || isNaN(secondValue)){
+            return;
+        }
+        switch(this.currentOperator){
             case "+":
-                console.log(this.operator);
                 result = firstValue + secondValue;
                 break;
             case '-':
-                console.log(this.operator);
                 result = firstValue - secondValue;
                 break;
             case '*':
-                console.log(this.operator);
                 result = firstValue * secondValue;
                 break;
             case '/':
-                console.log(this.operator);
                 result = firstValue / secondValue
                 break;
             case '%':
-                console.log(this.operator);
-                result = (firstValue/100) * secondValue
+                result = (firstValue/100) * secondValue;
                 break;
-            case 'xy':
-                console.log(this.operator);
-                result = Math.pow(firstValue, secondValue)
+            case '^':
+                result = Math.pow(firstValue, secondValue);
                 break;
             case 'Modulo':
-                console.log(this.operator);
                 result = firstValue % secondValue;
                 break
-            case 'y√x':
-                console.log(this.operator);
-                result = Math.pow(firstValue, 1/secondValue)
+            case '√':
+                result = Math.pow(firstValue, 1/secondValue);
                 break
             default:
-                console.log('calculate() Switch error');
-                return;
+                // if(this.currentOperator == 'y√x'){
+                //     result = Math.pow(firstValue, 1/secondValue)
+                //     // this.currentOperator = "√"
+                // } else{
+                    console.log('calculate() Switch error');
+                    return undefined;
+                // }
+
         }
         this.currentValue = result;
         this.historyValue = this.previousValueOutput.innerText;
         this.previousValue = '';
-        this.operator = undefined;
-        console.log('previousValue: ',this.previousValue);
-        console.log('currentValue: ',this.currentValue);
+        this.currentOperator = undefined;
     }
 
     //Extra functions
     extra(ext){
         if(this.currentValue == '' && !isNaN(this.currentValue)){return};
         this.ext = ext;
-        console.log('extra()');
-        let result
+        let result;
         let firstValue = parseFloat(this.previousValue);
         let secondValue = parseFloat(this.currentValue);
 
         switch(this.ext){
             case '1⁄x':
                 result = 1/secondValue;
-                this.historyValue = `reciprocal(${secondValue})`
+                this.historyValue = `reciprocal(${secondValue})`;
                 break;
             case "x!":
                 result = 1;
                 if(secondValue == 0 || secondValue == 1){
-                    return
+                    return;
                 } else{
-                    for(let i = 1; i <= secondValue; i++){
-                        result = result * i;
+                    if(Number.isInteger(secondValue)){
+                        if(secondValue < 0){
+                            result = undefined;
+                        }
+                        for(let i = 1; i <= secondValue; i++){
+                            result = result * i;
+                        }
+                    } else{
+                        var g = 7;
+                        var C = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716 * Math.pow(10, -6), 1.5056327351493116 * Math.pow(10, -7)];
+                        
+                        function gamma(z) {
+                            if (z < 0.5) {
+                                return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
+                            } else {
+                                z -= 1;
+                                var x = C[0];
+                                for (var i = 1; i < g + 2; i++)
+                                x += C[i] / (z + i);
+                                var t = z + g + 0.5;
+                                return Math.sqrt(2 * Math.PI) * Math.pow(t, (z + 0.5)) * Math.exp(-t) * x;
+                            }
+                        }
+                        result = gamma(secondValue+1);
                     }
                 }
                 this.historyValue = `${secondValue}!`
@@ -146,7 +172,6 @@ class Calculator{
             case "2√x":
                 result = Math.sqrt(secondValue);
                 this.historyValue = `squareroot(${secondValue})`
-                console.log(this.previousValueOutput.innerText)
                 break;
             case "3√x":
                 result = Math.cbrt(secondValue);
@@ -184,10 +209,8 @@ class Calculator{
                 result = Math.log(secondValue);
                 this.historyValue = `ln(${secondValue})`
                 break;
-            case "xy":
-                result = Math.pow(firstValue,secondValue);
             default:
-                console.log('extra() error');
+                console.log('extra() Switch error');
                 return;
         }
         this.currentValue = result;
@@ -199,8 +222,15 @@ class Calculator{
         this.currentValue = result;
     }
 
+    euler(){
+        let result = Math.E;
+        this.currentValue = result;
+    }
+
     invert(){
-        console.log('invert()')
+        if(this.currentValue == '' || isNaN(this.currentValue)){
+            return;
+        }
         let result = -1*this.currentValue;
         this.currentValue = result;
     }
@@ -228,76 +258,70 @@ const deleteButton = document.querySelector('[data-delete]')
 const equalsButton = document.querySelector('[data-equals]')
 
 //Extra functions
-// const reciprocalButton = document.querySelector('[data-reciprocal]')
 const extraButtons = document.querySelectorAll('[data-extra]')
 const piButton = document.querySelector('[data-pi]')
 const invertButton = document.querySelector('[data-plus-minus]')
+const eulerButton = document.querySelector('[data-euler]')
 
 //Basic functions Buttons
 numberButtons.forEach(function(button){
     button.addEventListener('click',function(){
-        console.log(button.innerText);
         calculator.appendValue(button.innerText);
         calculator.updateDisplay();
     })
 })
 
 allClearButton.addEventListener('click', function(){
-    console.log('allClear');
     calculator.allClear();
     calculator.updateDisplay();
 })
 
 operatorButtons.forEach(function(button){
     button.addEventListener('click', function(){
-        console.log(button.innerText);
         calculator.operators(button.innerText);
         calculator.updateDisplay();
     })
 })
 
 clearEntryButton.addEventListener('click', function(){
-    console.log('clearEntry');
     calculator.clearEntry();
     calculator.updateDisplay();
 })
 
 deleteButton.addEventListener('click',function(){
-    console.log('delete');
     calculator.delete();
     calculator.updateDisplay();
 })
 
 equalsButton.addEventListener('click',function(){
-    console.log('equals');
     calculator.calculate()
     calculator.updateDisplay();
 })
 
 piButton.addEventListener('click',function(){
-    console.log('pie');
     calculator.pi();
     calculator.updateDisplay();
 })
 
+eulerButton.addEventListener('click', function(){
+    calculator.euler();
+    calculator.updateDisplay();
+})
 
 extraButtons.forEach(function(button){
     button.addEventListener('click',function(){
-        console.log(button.innerText);
         calculator.extra(button.innerText);
         calculator.updateDisplay()
     })
 })
 
 invertButton.addEventListener('click', function(){
-    console.log('Invert +/-')
     calculator.invert()
     calculator.updateDisplay();
 })
 
 //Keyboard keypress
 window.addEventListener('keydown', function(e){
-    // console.log(e);
     if(e.key === "Escape"){
         calculator.allClear();
     }

@@ -66,7 +66,7 @@
 .currentOperand{
     box-sizing: border-box;
     text-align: start;
-    height: 40px;
+    min-height: 45px;
     font-size: 30px;
     padding-top: 5px;
     /* border: 1px solid green; */
