@@ -1,9 +1,9 @@
 class Calculator{
-    constructor(historyValue, previousValue, currentValue, resultValue){
+    constructor(historyValue, previousValue, currentValue, memoryValue){
         this.historyValueOutput = historyValue;
         this.previousValueOutput = previousValue;
         this.currentValueOutput = currentValue;
-        this.resultValueOutput = resultValue;
+        this.memoryValueOutput = memoryValue;
         this.allClear()
     }
 
@@ -22,14 +22,14 @@ class Calculator{
         this.historyValue = '';
         this.previousValue = '';
         this.currentValue = '';
-        this.resultValue = '';
+        this.memoryValue = 0;
         this.currentOperator = undefined;
         this.previousOperator = undefined;
         this.ext = undefined;
         // this.historyValueOutput.innerText = this.historyValue;
         // this.previousValueOutput.innerText = this.previousValue;
         // this.currentValueOutput.innerText = this.currentValue;
-        // this.resultValueOutput.innerText = this.resultValue;
+        // this.memoryValueOutput.innerText = this.memoryValue;
     }
 
     operators(operater){
@@ -51,7 +51,7 @@ class Calculator{
         this.historyValueOutput.innerText = this.historyValue;
         this.previousValueOutput.innerText = this.previousValue;
         this.currentValueOutput.innerText = this.currentValue;
-        this.resultValueOutput.innerText = this.resultValue;
+        this.memoryValueOutput.innerText = this.memoryValue;
         if(this.currentOperator != null){
             this.previousValueOutput.innerText = `${this.previousValue} ${this.currentOperator} ${this.currentValue}`;
         }
@@ -234,18 +234,61 @@ class Calculator{
         let result = -1*this.currentValue;
         this.currentValue = result;
     }
-    
+
+    memory(memory){
+        this.mem = memory;
+        if(this.mem == "MR"){
+            if(this.memoryValue != ''){
+                console.log('MR')
+                this.currentValue = parseFloat(this.memoryValue);
+                console.log(this.currentValue)
+            }
+        } else if(this.mem == "MC"){
+            this.memoryValue = 0;
+        }
+        if(this.currentValue == '' || isNaN(this.currentValue)){
+            return;
+        }
+        console.log('memory()')
+        switch(this.mem){
+            // case 'MC':
+            //     console.log('MC')
+            //     this.memoryValue = 0;
+            //     break;
+            // case 'MR':
+            //     console.log('MR')
+            //     this.currentValue = parseFloat(this.memoryValue);
+            //     console.log(this.currentValue)
+            //     break;
+            case 'MS':
+                console.log('MS')
+                this.memoryValue = parseFloat(this.currentValue);
+                console.log(memoryValue)
+                break;
+            case 'M+':
+                console.log('M+')
+                this.memoryValue = parseFloat(this.memoryValue) + parseFloat(this.currentValue);
+                break;
+            case 'M-':
+                console.log('M-')
+                this.memoryValue = parseFloat(this.memoryValue) - parseFloat(this.currentValue);
+                break;
+            default:
+                return;
+        }
+        this.memoryValueOutput.innerText = this.memoryValue;
+    }
 }
 
 //Outout values
 const historyValueOutput = document.querySelector('[data-history-operand]');
 const previousValueOutput = document.querySelector('[data-previous-operand]');
 const currentValueOutput = document.querySelector('[data-current-operand]');
-const resultValueOutput = document.querySelector('[data-result-operand]');
+const memoryValueOutput = document.querySelector('[data-result-operand]');
 
 
 //Instantiation
-let calculator = new Calculator(historyValueOutput, previousValueOutput, currentValueOutput, resultValueOutput);
+let calculator = new Calculator(historyValueOutput, previousValueOutput, currentValueOutput, memoryValueOutput);
 
 //Basic functions
 const numberButtons = document.querySelectorAll('[data-number');
@@ -262,6 +305,7 @@ const extraButtons = document.querySelectorAll('[data-extra]')
 const piButton = document.querySelector('[data-pi]')
 const invertButton = document.querySelector('[data-plus-minus]')
 const eulerButton = document.querySelector('[data-euler]')
+const memoryButtons = document.querySelectorAll('[data-memory]')
 
 //Basic functions Buttons
 numberButtons.forEach(function(button){
@@ -318,6 +362,14 @@ extraButtons.forEach(function(button){
 invertButton.addEventListener('click', function(){
     calculator.invert()
     calculator.updateDisplay();
+})
+
+memoryButtons.forEach(function(button){
+    console.log('memoryButtons')
+    button.addEventListener('click',function(){
+        calculator.memory(button.innerText);
+        calculator.updateDisplay();
+    })
 })
 
 //Keyboard keypress

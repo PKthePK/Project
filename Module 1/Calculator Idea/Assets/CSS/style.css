@@ -80,12 +80,12 @@
 
 .resultOperand{
     text-align: start;
-
+    display: none;
     /* border: 1px solid yellow; */
 }
 
 .window {
     /* width: fit-content; */
-    width: 356px;
+    max-width: 400px;
     border: 2px solid orange;
 }
